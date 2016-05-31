@@ -18,15 +18,27 @@ Vagrant.configure(2) do |config|
     export DEBIAN_FRONTEND=noninteractive
 
     apt-get update
-    apt-get install -y git
 
-    # Python3.3
-    apt-get install -y python3.3-dev python3.3-doc libpython3.3 python3-pymysql
+    # Python3.5
+    apt-get install -y python3.5-dev python3.5-doc libpython3.5 python3-pymysql
 
     # PyPy compatible Python3.3
-    wget https://bitbucket.org/pypy/pypy/downloads/pypy3.3-v5.2.0-alpha1-linux64.tar.bz2 -O pypy3.tar.bz2
-    bzip2 -dc pypy3.tar.bz2 | tar xf -
-    sudo mv pypy3 /opt/
-    sudo ln -s /opt/pypy3/bin/pypy3 /usr/bin/pypy3
+    wget https://bitbucket.org/pypy/pypy/downloads/pypy3.3-v5.2.0-alpha1-linux64.tar.bz2
+    bzip2 -dc pypy3.3-v5.2.0-alpha1-linux64.tar.bz2 | tar xf -
+    mv pypy3.3-v5.2.0-alpha1-linux64 /opt/pypy3.3
+    ln -s /opt/pypy3/bin/pypy3.3 /usr/bin/pypy3.3
+
+    # create virtual env
+    apt-get install -y git python-pip
+    pip install virtualenv virtualenvwrapper
+
+    echo "export WORKON_HOME=~/.virtualenvs" >> . bashrc
+    echo "export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python" >> .bashrc
+    echo "export VIRTUALENVWRAPPER_VIRTUALENV=/home/vagrant/.local/bin/virtualenv" >> .bashrc
+    echo "source /home/vagrant/.local/bin/virtualenvwrapper.sh" >> .bashrc
+
+    source .bashrc
+    mkvirtualenv -p /opt/pypy3.3/bin/pypy3.3 pypy && deactivate
+    mkvirtualenv -p /usr/bin/python3.5 python3 && deactivate
   SHELL
 end
